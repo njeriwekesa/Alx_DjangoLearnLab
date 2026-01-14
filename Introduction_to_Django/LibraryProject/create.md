@@ -8,3 +8,5 @@ book = Book.objects.create(
 )
 
 book
+
+##<Book: 1984>
