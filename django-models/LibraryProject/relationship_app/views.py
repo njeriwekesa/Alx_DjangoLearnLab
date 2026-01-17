@@ -6,7 +6,7 @@ from .models import Library
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.forms import AuthenticationForm 
 from .forms import UserRegisterForm 
-
+from django.contrib.auth.forms import UserCreationForm
 
 
 #Book view 
