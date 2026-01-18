@@ -34,7 +34,7 @@ def register(request):
       return redirect('list_books')
     
   else:
-    form = UserRegisterForm()  
+    form = UserCreationForm()  
   return render(request, 'relationship_app/register.html', {'form': form})
 
 
