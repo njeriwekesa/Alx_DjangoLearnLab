@@ -1,7 +1,10 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
-from django.contrib.auth.decorators import permission_required
+from django.contrib.auth.decorators import permission_required, login_required
+from django.contrib.auth import authenticate, login
 from .models import Book
+
+
 
 # view/create/edit/delete Book decorators to enforce these permissions
 
@@ -49,3 +52,20 @@ def delete_book(request, pk):
   book.delete()
 
   return HttpResponse("Book deleted successfully")
+
+
+def login_view(request):
+    error = None
+    if request.method == "POST":
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect("book_list")  
+        
+        else:
+            error = "Invalid username or password"
+
+    return render(request, "bookshelf/login.html", {"error": error})
