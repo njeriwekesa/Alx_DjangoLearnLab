@@ -37,7 +37,7 @@ def edit_book(request, pk):
   return HttpResponse(f"Editing book: {book.title}")
 
 @permission_required('bookshelf.can_view', raise_exception=True)
-def list_books(request):
+def book_list(request):
   books = Book.objects.all()
 
   output = ", ".join(book.title for book in books)
