@@ -3,27 +3,39 @@ from django.http import HttpResponse
 from django.contrib.auth.decorators import permission_required, login_required
 from django.contrib.auth import authenticate, login
 from .models import Book
+from .forms import ExampleForm
 
 
 
 # view/create/edit/delete Book decorators to enforce these permissions
 
-@permission_required('bookshelf.can_create', raise_exception=True)
-def add_book(request):
-  if request.method == "POST":
-    title = request.POST.ger("title")
-    author = request.POST.get("author")
-    year = request.POST.get("publication_year")
+# @permission_required('bookshelf.can_create', raise_exception=True)
+# def add_book(request):
+#   if request.method == "POST":
+#     title = request.POST.ger("title")
+#     author = request.POST.get("author")
+#     year = request.POST.get("publication_year")
 
-    Book.objects.create(
-      title=title,
-      author=author,
-      publication_year=year
-    )
+#     Book.objects.create(
+#       title=title,
+#       author=author,
+#       publication_year=year
+#     )
 
-    return HttpResponse("Book created successfully")
+#     return HttpResponse("Book created successfully")
   
-  return HttpResponse("Send a POST request to create a book")
+#   return HttpResponse("Send a POST request to create a book")
+
+@permission_required('bookshelf.can_create', raise_exception=True)
+def example_form_view(request):
+    if request.method == "POST":
+        form = ExampleForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return HttpResponse("Book added successfully")
+    else:
+        form = ExampleForm()
+    return render(request, 'bookshelf/form_example.html', {'form': form})
 
 @permission_required('bookshelf.can_edit', raise_exception=True)
 def edit_book(request, pk):
@@ -43,8 +55,8 @@ def edit_book(request, pk):
 def book_list(request):
   books = Book.objects.all()
 
-  output = ", ".join(book.title for book in books)
-  return HttpResponse(f"Books: {output}")
+  #output = ", ".join(book.title for book in books)
+  return render(request, 'bookshelf/book_list.html', {'books': books})
 
 @permission_required('bookshelf.can_delete', raise_exception=True)
 def delete_book(request, pk):
@@ -69,3 +81,5 @@ def login_view(request):
             error = "Invalid username or password"
 
     return render(request, "bookshelf/login.html", {"error": error})
+
+
