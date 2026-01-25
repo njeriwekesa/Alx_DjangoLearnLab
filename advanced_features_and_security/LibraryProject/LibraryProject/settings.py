@@ -47,6 +47,8 @@ X_FRAME_OPTIONS = "DENY"             # Protects against clickjacking
 SECURE_CONTENT_TYPE_NOSNIFF = True   # Prevents browsers from MIME-sniffing responses
 SECURE_BROWSER_XSS_FILTER = True     # Enables browser XSS filtering
 
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https') #allows Django to trust the X-Forwarded-Proto header so it can correctly identify secure requests.
+
 
 # Application definition
 
