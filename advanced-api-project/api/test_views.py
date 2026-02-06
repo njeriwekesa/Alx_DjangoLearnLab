@@ -54,15 +54,11 @@ class BookAPITestCase(APITestCase):
 
   def test_create_book_authenticated(self):
     """Test creating a book with authentication"""  
-    self.client.force_authenticate(user=self.user)
+    self.client.login(username="testuser", password="testpassword")
+    response = self.client.post(self.books_url, self.book_data)
 
-    data = {
-      "title": "Authenticated Book",
-      "publication_year": 2021,
-      "author": self.author.id
-    }
-    response = self.client.post(self.book_list_url, data)
-    self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+    self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+    self.assertEqual(response.data["title"], self.book_data["title"])
 
   def test_update_book(self):
     """Test updating a book"""  
