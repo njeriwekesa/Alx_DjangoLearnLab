@@ -5,6 +5,9 @@ from rest_framework.test import APITestCase, APIClient
 
 from api.models import Author, Book
 
+# Django automatically uses a separate test database when running manage.py test
+
+
 class BookAPITestCase(APITestCase):
   """
   Test suite for Book API endpoints.
@@ -36,6 +39,7 @@ class BookAPITestCase(APITestCase):
     """Test retrieving list of books"""
     response = self.client.get(self.book_list_url)
     self.assertEqual(response.status_code, status.HTTP_200_OK)
+    self.assertIsInstance(response.data, list)
 
   def test_create_book_requires_authentication(self):
     """Test that unauthenticated users cannot create books"""  
