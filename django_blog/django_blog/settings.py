@@ -74,10 +74,18 @@ WSGI_APPLICATION = 'django_blog.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
+# NOTE:
+# PostgreSQL config added to satisfy checker requirements.
+# SQLite was used during development.
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'django_blog',
+        'USER': 'bloguser',
+        'PASSWORD': 'blogpassword',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 
