@@ -143,3 +143,98 @@ All forms use CSRF tokens for security.
 Passwords are securely hashed using Django’s built-in authentication system.
 
 Logout uses a POST request to prevent CSRF attacks and unintended logouts.
+
+
+Blog Post Management Features (CRUD)
+Overview
+
+This update introduces full CRUD (Create, Read, Update, Delete) functionality for blog posts in the django_blog project. Authenticated users can create and manage their own posts, while all users can view published content.
+
+The implementation uses Django class-based generic views with proper authentication and permission enforcement.
+
+Features Implemented
+1. List All Posts
+
+URL: /posts/
+
+View: ListView
+
+Displays all blog posts.
+
+Accessible to all users (authenticated and anonymous).
+
+2. View Post Details
+
+URL: /posts/<int:pk>/
+
+View: DetailView
+
+Displays full content of a single post.
+
+Accessible to all users.
+
+3. Create New Post
+
+URL: /posts/new/
+
+View: CreateView
+
+Only authenticated users can create posts.
+
+The author field is automatically set to the logged-in user.
+
+Uses LoginRequiredMixin.
+
+4. Update Post
+
+URL: /posts/<int:pk>/edit/
+
+View: UpdateView
+
+Only the post author can edit.
+
+Uses:
+
+LoginRequiredMixin
+
+UserPassesTestMixin
+
+Enforces ownership via test_func().
+
+5. Delete Post
+
+URL: /posts/<int:pk>/delete/
+
+View: DeleteView
+
+Only the post author can delete.
+
+Uses:
+
+LoginRequiredMixin
+
+UserPassesTestMixin
+
+Permissions & Access Control
+
+If a non-author attempts to edit or delete a post, the system returns:
+
+403 Forbidden
+
+
+This ensures backend-level security, not just UI restrictions.
+
+
+Testing
+
+The following were manually tested:
+
+Public users can view posts and details.
+
+Only authenticated users can create posts.
+
+Only post authors can edit or delete posts.
+
+Unauthorized edit/delete attempts return 403 Forbidden.
+
+Navigation between views works correctly.
