@@ -1,22 +1,13 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import login
+from django.urls import reverse
+from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth import logout
-from .forms import CustomUserCreationForm
-
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from .models import Post
 
-from django.shortcuts import render
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from .models import Post
-
-from .forms import CommentForm
-from .models import Comment
-
+from .models import Post, Comment
+from .forms import CustomUserCreationForm, CommentForm
 
 def home(request):
   return render(request, "blog/home.html")
@@ -57,12 +48,7 @@ class PostListView(ListView):
 class PostDetailView(DetailView):
     model = Post
     template_name = 'blog/post_detail.html'
-
-    # Detail view for comments
-    def get_context_data(self, **kwargs):
-       context = super().get_context_data(**kwargs)
-       context['comment_form'] = CommentForm()
-       return context         
+        
 
 # Create new post
 class PostCreateView(LoginRequiredMixin, CreateView):
@@ -99,20 +85,19 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         return self.request.user == post.author
     
 # CRUD operations for Comments
-#Add Comment
-@login_required
-def add_comment(request, pk):
-   post = get_object_or_404(Post, pk=pk)
+# Create Comment
+class CommentCreateView(LoginRequiredMixin, CreateView):
+    model = Comment
+    form_class = CommentForm
 
-   if request.method == 'POST':
-      form = CommentForm(request.POST)
-      if form.is_valid():
-         comment = form.save(commit=False)
-         comment.post = post
-         comment.author = request.user
-         comment.save()
+    def form_valid(self, form):
+        post = get_object_or_404(Post, pk=self.kwargs['post_id'])
+        form.instance.author = self.request.user
+        form.instance.post = post
+        return super().form_valid(form)
 
-      return redirect('post-detail', pk=post.pk)     
+    def get_success_url(self):
+        return reverse('post-detail', kwargs={'pk': self.object.post.pk})     
 
 # Update Comment
 class CommentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
