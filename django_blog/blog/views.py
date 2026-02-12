@@ -62,8 +62,10 @@ class PostCreateView(LoginRequiredMixin, CreateView):
     template_name = 'blog/post_form.html'
 
     def form_valid(self, form):
-        form.instance.author = self.request.user
-        return super().form_valid(form)
+      post = get_object_or_404(Post, pk=self.kwargs['pk'])
+      form.instance.author = self.request.user
+      form.instance.post = post
+      return super().form_valid(form)
 
 # Update post (only author)
 class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
