@@ -336,3 +336,81 @@ Non-authors attempting to edit or delete receive a 403 Forbidden response.
 Edit and delete options are not displayed for non-authors.
 
 Navigation between post and comment views functions correctly.
+
+**Tagging and Search Functionality**
+
+
+Advanced Features: Tagging and Search Functionality
+
+This blog application includes advanced content organization and discovery features through tagging and search functionality. These features improve user experience by allowing posts to be categorized and easily retrieved based on keywords or topics.
+
+*Tagging System*
+
+The tagging system allows authors to assign descriptive labels (tags) to blog posts. Tags help group related content together and enable users to filter posts by topic.
+
+Adding Tags to a Post
+
+When creating or editing a post, a Tags field is available.
+
+Tags should be entered as a comma-separated list.
+
+Example:
+
+django, backend, authentication
+
+
+If a tag does not already exist, it is automatically created.
+
+A post can have multiple tags.
+
+A single tag can be associated with multiple posts.
+
+Viewing Posts by Tag
+
+Tags are displayed on each post’s detail page.
+
+Clicking a tag redirects to a filtered page showing all posts associated with that tag.
+
+
+*Search Functionality*
+
+The blog includes a search feature that allows users to find posts based on keywords.
+
+How Search Works
+
+Users can search for posts by:
+
+Title
+
+Content
+
+Tags
+
+The search uses case-insensitive matching and supports partial keyword searches.
+
+Using the Search Bar
+
+A search bar is available in the navigation area.
+
+Enter a keyword and submit the form.
+
+The results page displays all posts matching the search query.
+
+
+*Feature Testing*
+
+Tagging and search functionality were tested by:
+
+Creating posts with multiple tags
+
+Editing tags on existing posts
+
+Clicking tag links to verify filtered results
+
+Searching by title keywords
+
+Searching by content keywords
+
+Searching by tag names
+
+All features integrate seamlessly with existing CRUD functionality.

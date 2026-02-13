@@ -1,14 +1,14 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
 from .views import (
-  PostListView, PostDetailView, PostCreateView, PostUpdateView, PostDeleteView, CommentUpdateView, CommentDeleteView, CommentCreateView
+  PostListView, PostDetailView, PostCreateView, PostUpdateView, PostDeleteView, CommentUpdateView, CommentDeleteView, CommentCreateView, PostByTagListView
 )
 from . import views
 
 urlpatterns = [
  #path("", views.home, name="home"),
 
-  path('tags/<str:tag_name>/', views.posts_by_tag, name='posts-by-tag'),
+  path('tags/<slug:tag_slug>/', PostByTagListView.as_view(), name='posts-by-tag'),
   path('search/', views.search_posts, name='search'),
 
   path('post/<int:pk>/comments/new/',CommentCreateView.as_view(),name='comment-create'),
