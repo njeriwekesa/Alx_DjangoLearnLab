@@ -23,6 +23,10 @@
                                 Logout
                         </button>
                     </form>
+                    <form method="GET" action="{% url 'search' %}">
+                        <input type="text" name="q" placeholder="Search posts...">
+                        <button type="submit">Search</button>
+                    </form>
                 </li>
                 {% else %}
                 <li><a href="{% url 'login' %}">Login</a></li>

@@ -7,7 +7,10 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
 from .models import Post, Comment
-from .forms import CustomUserCreationForm, CommentForm
+from .forms import CustomUserCreationForm, CommentForm, PostForm
+
+from taggit.models import Tag
+from django.db.models import Q
 
 def home(request):
   return render(request, "blog/home.html")
@@ -58,19 +61,17 @@ class PostDetailView(DetailView):
 # Create new post
 class PostCreateView(LoginRequiredMixin, CreateView):
     model = Post
-    fields = ['title', 'content']
+    form_class = PostForm
     template_name = 'blog/post_form.html'
 
     def form_valid(self, form):
-      post = get_object_or_404(Post, pk=self.kwargs['pk'])
-      form.instance.author = self.request.user
-      form.instance.post = post
-      return super().form_valid(form)
+        form.instance.author = self.request.user
+        return super().form_valid(form)
 
 # Update post (only author)
 class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Post
-    fields = ['title', 'content']
+    form_class = PostForm
     template_name = 'blog/post_form.html'
 
     def form_valid(self, form):
@@ -98,7 +99,8 @@ class CommentCreateView(LoginRequiredMixin, CreateView):
     form_class = CommentForm
 
     def form_valid(self, form):
-        post = get_object_or_404(Post, pk=self.kwargs['post_id'])
+        # Use 'pk' here because the URL pattern now uses <int:pk>
+        post = get_object_or_404(Post, pk=self.kwargs['pk'])
         form.instance.author = self.request.user
         form.instance.post = post
         return super().form_valid(form)
@@ -125,3 +127,28 @@ class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
    def test_func(self):
       comment = self.get_object()
       return self.request.user == comment.author 
+   
+def posts_by_tag(request, tag_name):
+   tag = get_object_or_404(Tag, name=tag_name)   
+   posts = Post.objects.filter(tags__name__in=[tag_name])
+
+   return render(request, 'blog/posts_by_tag.html', {
+      'tag': tag,
+      'posts': posts
+   })
+
+def search_posts(request):
+   query = request.GET.get('q')
+   results = []
+
+   if query:
+      results = Post.objects.filter(
+         Q(title__icontains=query) |
+         Q(content__icontains=query) |
+         Q(tags__name__icontains=query)
+      ).distinct()
+
+      return render(request, 'blog/search_results.html', {
+         'query': query,
+         'results': results
+      })
