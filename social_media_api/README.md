@@ -191,3 +191,32 @@ Response format:
 Anyone can view posts and comments.
 
 Only authenticated users can create posts and comments.
+
+**User Follow and Feed Functionality**
+
+
+The custom user model was updated to support following relationships:
+
+
+following → Users that the current user follows
+
+followers → Users that follow the current user (reverse relation)
+
+symmetrical=False ensures follow relationships are directional
+
+All follow and feed endpoints require Token Authentication.
+
+
+Users can only modify their own follow relationships.
+
+🎯 What This Implements
+
+This feature introduces:
+
+Social graph (user-to-user relationships)
+
+Directional following
+
+Personalized content feed
+
+Secure token-based access control
