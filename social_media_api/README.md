@@ -90,3 +90,104 @@ A custom user model was created at project start to allow future extensibility.
 Token authentication was selected for simplicity and stateless API interactions.
 
 Followers are implemented using a self-referencing ManyToMany field with symmetrical=False to allow directional relationships.
+
+**Posts and Comments API Endpoints**
+
+🔐 Authentication Required
+
+Creating, updating, and deleting posts or comments requires authentication using Token Authentication.
+
+Include the following header in your requests:
+
+Authorization: Token your_token_here
+
+You can obtain your token via the login endpoint:
+
+POST /api/accounts/login/
+📝 Post Endpoints
+
+Base URL:
+
+/api/posts/
+1️⃣ List All Posts (Public)
+GET /api/posts/
+
+Supports pagination and search.
+
+2️⃣ Retrieve Single Post (Public)
+GET /api/posts/<id>/
+
+Example:
+
+GET /api/posts/1/
+3️⃣ Create Post (Authenticated)
+POST /api/posts/
+
+Example Request:
+
+{
+  "title": "My First Post",
+  "content": "This is my content."
+}
+4️⃣ Update Post (Owner Only)
+PUT /api/posts/<id>/
+5️⃣ Delete Post (Owner Only)
+DELETE /api/posts/<id>/
+💬 Comment Endpoints
+
+Base URL:
+
+/api/comments/
+1️⃣ List All Comments
+GET /api/comments/
+2️⃣ Retrieve Single Comment
+GET /api/comments/<id>/
+3️⃣ Create Comment (Authenticated)
+POST /api/comments/
+
+Example Request:
+
+{
+  "post": 1,
+  "content": "This is a comment."
+}
+4️⃣ Update Comment (Owner Only)
+PUT /api/comments/<id>/
+5️⃣ Delete Comment (Owner Only)
+DELETE /api/comments/<id>/
+🔎 Search Functionality
+
+Posts support search by:
+
+title
+
+content
+
+Example:
+
+GET /api/posts/?search=django
+
+This returns posts containing "django" in the title or content.
+
+📄 Pagination
+
+Post and comment list endpoints use page-number pagination.
+
+Example:
+
+GET /api/posts/?page=2
+
+Response format:
+
+{
+  "count": 25,
+  "next": "http://127.0.0.1:8000/api/posts/?page=3",
+  "previous": "http://127.0.0.1:8000/api/posts/?page=1",
+  "results": [...]
+}
+
+🛡 **Permissions**
+
+Anyone can view posts and comments.
+
+Only authenticated users can create posts and comments.
