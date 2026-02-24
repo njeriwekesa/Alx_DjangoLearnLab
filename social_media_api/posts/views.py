@@ -3,7 +3,6 @@ from .serializers import PostSerializer, CommentSerializer
 from .permissions import IsOwnerOrReadOnly
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter
-from django.shortcuts import get_object_or_404
 from django.contrib.contenttypes.models import ContentType
 
 from rest_framework.decorators import api_view, permission_classes
@@ -46,17 +45,13 @@ class FeedView(generics.ListAPIView):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def like_post(request, pk):
-    post = get_object_or_404(Post, pk=pk)
+    post = generics.get_object_or_404(Post, pk=pk)
 
-    like, created = Like.objects.get_or_create(
-        user=request.user,
-        post=post
-    )
+    like, created = Like.objects.get_or_create(user=request.user, post=post)
 
     if not created:
         return Response({"detail": "Already liked."}, status=status.HTTP_400_BAD_REQUEST)
 
-    # Create notification
     Notification.objects.create(
         recipient=post.author,
         actor=request.user,
@@ -70,13 +65,15 @@ def like_post(request, pk):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def unlike_post(request, pk):
-    post = get_object_or_404(Post, pk=pk)
+    post = generics.get_object_or_404(Post, pk=pk)
 
     like = Like.objects.filter(user=request.user, post=post)
 
     if not like.exists():
-        return Response({"detail": "You have not liked this post."},
-                        status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {"detail": "You have not liked this post."},
+            status=status.HTTP_400_BAD_REQUEST
+        )
 
     like.delete()
-    return Response({"detail": "Post unliked."}, status=status.HTTP_200_OK)    
+    return Response({"detail": "Post unliked."}, status=status.HTTP_200_OK)   
